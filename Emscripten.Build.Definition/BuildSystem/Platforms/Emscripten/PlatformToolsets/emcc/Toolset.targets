@@ -265,7 +265,7 @@
       <Context>File</Context>
     </PropertyPageSchema>
     <PropertyPageSchema Include="$(PropertyXmlDirectory)\general.xml">
-      <Context>Project</Context>
+      <Context>Project;PropertySheet</Context>
     </PropertyPageSchema>
     <PropertyPageSchema Include="
         $(VCTargetsPath)$(LangID)\debugger_general.xml;
