@@ -200,6 +200,30 @@ namespace Emscripten.Build.CPPTasks
             return base.ValidateParameters();
         }
 
+        public class ToolDriver : VCToolTask
+        {
+            EmscriptenCompile m_parent;
+            public ToolDriver(EmscriptenCompile parent)
+                : base(new ResourceManager("Emscripten.Build.CPPTasks.Properties.Resources", Assembly.GetExecutingAssembly()))
+            {
+                m_parent = parent;
+                ToolName = GetType().Name;
+            }
+
+            protected override string ToolName { get; }
+            protected override Encoding ResponseFileEncoding => Encoding.UTF8;
+
+            protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
+            {
+                m_parent.LogEventsFromTextOutput(singleLine, messageImportance);
+            }
+
+            public new int ExecuteTool(string pathToTool, string responseFileCommands, string commandLineCommands)
+            {
+                return base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
+            }
+        };
+
         private int CompileWithEmscripten(string pathToTool)
         {
             int retCode = 0;
@@ -254,7 +278,7 @@ namespace Emscripten.Build.CPPTasks
                         }
 
                         // Execute the tool, on this source file, with the given commandline.
-                        retCode = base.ExecuteTool(pathToTool, responseFileCommands, string.Empty);
+                        retCode = (new ToolDriver(this)).ExecuteTool(pathToTool, responseFileCommands, string.Empty);
 
                         if (retCode != 0)
                         {
